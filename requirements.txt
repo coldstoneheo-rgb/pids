@@ -1,0 +1,39 @@
+# 주식 데이터 수집
+yfinance>=0.2.38
+pandas>=2.1.0
+numpy>=1.24.0
+
+# 한국 주식 데이터
+pykrx>=1.0.45
+FinanceDataReader>=0.9.50
+
+# 기술적 분석
+ta-lib>=0.4.28
+pandas-ta>=0.3.14b0
+
+# 시각화
+matplotlib>=3.8.0
+plotly>=5.18.0
+mplfinance>=0.12.10b0
+
+# 설정 파일 관리
+pyyaml>=6.0.1
+
+# 데이터 처리
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# 백테스팅
+backtrader>=1.9.78.123
+quantstats>=0.0.62
+
+# 유틸리티
+python-dateutil>=2.8.2
+tqdm>=4.66.0
+
+# CLI 인터페이스
+rich>=13.7.0
+click>=8.1.7
+
+# 데이터 저장
+openpyxl>=3.1.2

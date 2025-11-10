@@ -1,0 +1,40 @@
+# 개인 투자 프로필 설정
+
+investor_profile:
+  name: "나의 투자 프로필"
+  risk_tolerance: "moderate_aggressive"  # conservative, moderate, moderate_aggressive, aggressive
+  investment_horizon: "medium_to_long"   # short (< 6개월), medium (6개월-2년), long (> 2년)
+
+investment_style:
+  primary_styles:
+    - "value_investing"      # 가치투자
+    - "growth_investing"     # 성장투자
+  preferences:
+    - "technology_stocks"    # 기술주
+    - "market_leaders"       # 주도주/1등주
+    - "quality_companies"    # 우량주
+
+target_markets:
+  - country: "KR"
+    exchanges: ["KOSPI", "KOSDAQ"]
+    enabled: true
+  - country: "US"
+    exchanges: ["NYSE", "NASDAQ"]
+    enabled: true
+
+# 관심 섹터 (추후 업데이트)
+preferred_sectors:
+  - "Technology"
+  - "Semiconductors"
+  - "AI/ML"
+  - "Biotechnology"
+  - "Electric Vehicles"
+  - "Renewable Energy"
+
+# 제외 조건
+exclusions:
+  sectors: []  # 제외할 섹터
+  companies: []  # 제외할 기업
+  criteria:
+    - "penny_stocks"  # 소수점 거래 종목 제외
+    - "low_liquidity"  # 저유동성 종목 제외

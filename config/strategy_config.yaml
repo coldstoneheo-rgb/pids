@@ -1,0 +1,123 @@
+# 투자 전략 설정
+
+# 1. 스크리닝 기준
+screening_criteria:
+
+  # PBR (Price to Book Ratio)
+  pbr:
+    enabled: true
+    max_value: 1.0
+    prefer_lower_band: true  # PBR 밴드 하단 선호
+    band_percentile: 20      # 하위 20% 이하
+
+  # PER (Price to Earnings Ratio)
+  per:
+    enabled: true
+    min_value: 10
+    max_value: 15
+    use_consensus: true      # 컨센서스 이익 사용
+
+  # 거래량 (Volume)
+  volume:
+    enabled: true
+    min_avg_daily_volume: 100000      # 최소 평균 일일 거래량
+    min_avg_daily_value_krw: 1000000000  # 최소 평균 일일 거래대금 (10억원)
+    min_avg_daily_value_usd: 1000000     # 최소 평균 일일 거래대금 ($1M)
+    liquidity_check: true                # 유동성 체크
+
+  # 시가총액
+  market_cap:
+    min_market_cap_krw: 10000000000   # 최소 시가총액 (100억원)
+    min_market_cap_usd: 10000000      # 최소 시가총액 ($10M)
+    prefer_small_mid_cap: true         # 중소형주 선호
+
+  # 재무 건전성
+  financial_health:
+    min_roe: 5.0              # 최소 ROE (%)
+    max_debt_ratio: 200       # 최대 부채비율 (%)
+    positive_operating_profit: true
+
+# 2. 기업 분석 체크리스트
+company_analysis:
+
+  market_position:
+    is_market_leader: true    # 업계 1등 여부
+    has_moat: true            # 경제적 해자 보유 여부
+    competitive_advantage:    # 경쟁 우위
+      - "technology"          # 기술력
+      - "brand"              # 브랜드
+      - "cost"               # 원가 우위
+      - "network_effect"     # 네트워크 효과
+
+  growth_potential:
+    sector_growth: true       # 섹터 성장성
+    company_growth: true      # 기업 성장성
+    innovation: true          # 혁신성
+
+  management:
+    check_governance: true    # 지배구조 체크
+    check_transparency: true  # 투명성 체크
+
+# 3. 차트 분석 (매수/매도 시점)
+technical_analysis:
+
+  # 매수 시점
+  buy_signals:
+    price_adjustment: true              # 가격 조정 완료
+    time_adjustment: true               # 기간 조정 완료
+    support_level_approach: true        # 전저점 하단 접근
+    split_buying: true                  # 분할 매수
+    accumulation_phase: true            # 횡보 구간
+
+    # 기술적 지표
+    indicators:
+      rsi_oversold: 30                  # RSI 과매도 기준
+      rsi_buy_zone: [25, 40]           # RSI 매수 구간
+      moving_average_support:
+        - "MA20"
+        - "MA60"
+        - "MA120"
+      volume_confirmation: true         # 거래량 확인
+
+  # 매도 시점
+  sell_signals:
+    target_return_min: 100              # 최소 목표 수익률 (%)
+    target_return_max: 200              # 최대 목표 수익률 (%)
+    multiple_from_low: [3, 4]          # 전저점 대비 배수
+
+    # 손절 기준
+    stop_loss:
+      enabled: true
+      percentage: -20                   # 손절 비율 (%)
+      trailing_stop: true               # 트레일링 스탑
+
+    # 익절 전략
+    take_profit:
+      partial_profit_1: 50              # 1차 익절 (50%)
+      partial_profit_2: 100             # 2차 익절 (100%)
+      final_exit: 200                   # 최종 청산 (200%)
+      scale_out: true                   # 분할 매도
+
+# 4. 포트폴리오 관리
+portfolio_management:
+  max_positions: 10                     # 최대 보유 종목 수
+  max_sector_concentration: 30          # 최대 섹터 집중도 (%)
+  max_single_position: 15               # 단일 종목 최대 비중 (%)
+  rebalancing_frequency: "monthly"      # 리밸런싱 주기
+  cash_reserve: 20                      # 현금 보유 비율 (%)
+
+# 5. 리스크 관리
+risk_management:
+  max_portfolio_volatility: 25          # 최대 포트폴리오 변동성 (%)
+  max_drawdown_tolerance: 30            # 최대 낙폭 허용치 (%)
+  correlation_check: true               # 상관관계 체크
+  diversification_score_min: 70         # 최소 분산 점수
+
+# 6. 백테스팅 설정
+backtesting:
+  start_date: "2020-01-01"
+  initial_capital_krw: 100000000        # 초기 자본 (1억원)
+  initial_capital_usd: 100000           # 초기 자본 ($100K)
+  commission_rate: 0.003                # 수수료율 (0.3%)
+  slippage: 0.001                       # 슬리피지 (0.1%)
+  benchmark: "SPY"                      # 벤치마크 (미국), KOSPI (한국)
