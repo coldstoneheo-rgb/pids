@@ -25,6 +25,7 @@ class KoreaStockData:
         self.logger = logging.getLogger(__name__)
         if not MODULES_AVAILABLE:
             self.logger.warning("필수 모듈이 설치되지 않았습니다.")
+        self._ticker_cache = {}  # 종목명-코드 캐시
 
     def get_stock_list(self, market: str = "ALL") -> pd.DataFrame:
         """
@@ -68,6 +69,59 @@ class KoreaStockData:
         except Exception as e:
             self.logger.error(f"주식 리스트 조회 실패: {e}")
             return pd.DataFrame()
+
+    def get_ticker_by_name(self, stock_name: str) -> Optional[str]:
+        """
+        종목명으로 종목 코드 검색
+
+        Args:
+            stock_name: 종목명 (예: "삼성전자", "SK텔레콤")
+
+        Returns:
+            종목 코드 또는 None
+        """
+        if not MODULES_AVAILABLE:
+            return None
+
+        try:
+            # 캐시 확인
+            if stock_name in self._ticker_cache:
+                return self._ticker_cache[stock_name]
+
+            today = datetime.now().strftime("%Y%m%d")
+
+            # KOSPI + KOSDAQ 전체 종목 검색
+            for market in ["KOSPI", "KOSDAQ"]:
+                try:
+                    tickers = stock.get_market_ticker_list(today, market=market)
+
+                    for ticker in tickers:
+                        try:
+                            name = stock.get_market_ticker_name(ticker)
+                            # 캐시에 저장
+                            self._ticker_cache[name] = ticker
+
+                            # 정확히 일치하는 경우
+                            if name == stock_name:
+                                return ticker
+                        except:
+                            continue
+
+                except Exception as e:
+                    self.logger.debug(f"{market} 검색 중 오류: {e}")
+                    continue
+
+            # 부분 일치 검색 (정확한 일치가 없는 경우)
+            for name, ticker in self._ticker_cache.items():
+                if stock_name in name or name in stock_name:
+                    self.logger.info(f"부분 일치 발견: '{stock_name}' -> '{name}' ({ticker})")
+                    return ticker
+
+            return None
+
+        except Exception as e:
+            self.logger.error(f"종목 코드 검색 실패 ({stock_name}): {e}")
+            return None
 
     def _get_market_type(self, ticker: str) -> str:
         """종목 코드로 시장 구분"""

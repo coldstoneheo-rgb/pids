@@ -68,12 +68,29 @@ def analyze_single_stock():
     print("시장 선택: 1) 한국  2) 미국")
     market_choice = input("선택: ").strip()
 
-    ticker = input("종목 코드 입력: ").strip().upper()
+    ticker_input = input("종목 코드 또는 종목명 입력 (예: 017670 또는 SK텔레콤): ").strip()
 
     if market_choice == '1':
         # 한국 주식
         data_fetcher = KoreaStockData()
         market = 'KR'
+
+        # 종목 코드 변환 (한글 이름인 경우)
+        if ticker_input.isdigit():
+            # 숫자면 종목 코드로 간주
+            ticker = ticker_input
+        else:
+            # 한글이면 종목명으로 검색
+            print(f"\n'{ticker_input}' 종목 코드 검색 중...")
+            ticker = data_fetcher.get_ticker_by_name(ticker_input)
+
+            if not ticker:
+                print(f"종목을 찾을 수 없습니다: {ticker_input}")
+                print("힌트: 정확한 종목명을 입력하거나 6자리 종목 코드를 입력하세요.")
+                print("예: '017670' 또는 'SK텔레콤'")
+                return
+
+            print(f"종목 코드 찾음: {ticker}")
 
         print(f"\n{ticker} 데이터 수집 중...")
 
@@ -119,6 +136,7 @@ def analyze_single_stock():
         # 미국 주식
         data_fetcher = USStockData()
         market = 'US'
+        ticker = ticker_input.upper()  # 미국 주식은 대문자
 
         print(f"\n{ticker} 데이터 수집 중...")
 
