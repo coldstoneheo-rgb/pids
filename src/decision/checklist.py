@@ -4,7 +4,8 @@
 """
 
 import pandas as pd
-from typing import Dict, List, Optional
+import numpy as np
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 import json
 from pathlib import Path
@@ -328,6 +329,33 @@ class DecisionChecklist:
             checklist['summary']['final_decision'] = '투자 제외'
             checklist['summary']['confidence_level'] = 'LOW'
 
+    def _convert_to_json_serializable(self, obj: Any) -> Any:
+        """
+        객체를 JSON 직렬화 가능한 형태로 변환
+
+        Args:
+            obj: 변환할 객체
+
+        Returns:
+            JSON 직렬화 가능한 객체
+        """
+        if isinstance(obj, dict):
+            return {key: self._convert_to_json_serializable(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_to_json_serializable(item) for item in obj]
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, (np.bool_)):
+            return bool(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif pd.isna(obj):
+            return None
+        else:
+            return obj
+
     def save_checklist(self, checklist: Dict, file_path: str = None):
         """
         체크리스트 저장
@@ -345,8 +373,11 @@ class DecisionChecklist:
             file_path = data_dir / f"{ticker}_{date}_checklist.json"
 
         try:
+            # JSON 직렬화 가능한 형태로 변환
+            serializable_checklist = self._convert_to_json_serializable(checklist)
+
             with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(checklist, f, ensure_ascii=False, indent=2)
+                json.dump(serializable_checklist, f, ensure_ascii=False, indent=2)
 
             self.logger.info(f"체크리스트 저장 완료: {file_path}")
 
