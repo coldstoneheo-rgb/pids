@@ -9,6 +9,9 @@ import logging
 from pathlib import Path
 from datetime import datetime, timedelta
 
+# 로그 디렉토리 생성 (로깅 설정 전에 실행)
+Path("logs").mkdir(exist_ok=True)
+
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
