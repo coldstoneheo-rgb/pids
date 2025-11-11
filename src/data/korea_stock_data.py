@@ -247,24 +247,43 @@ class KoreaStockData:
             end_date = datetime.now()
             start_date = end_date - timedelta(days=period_years*365)
 
-            # 기간 동안의 PBR 데이터 수집
-            pbr_data = []
-            current_date = start_date
+            # 먼저 실제 거래일 데이터를 가져옴 (주가 데이터 기반)
+            ohlcv = self.get_ohlcv(
+                ticker,
+                start_date.strftime("%Y%m%d"),
+                end_date.strftime("%Y%m%d")
+            )
 
-            while current_date <= end_date:
-                date_str = current_date.strftime("%Y%m%d")
+            if ohlcv.empty:
+                return {}
+
+            # 실제 거래일에서 월 단위로 샘플링
+            trading_dates = ohlcv.index.tolist()
+            sampled_dates = [trading_dates[i] for i in range(0, len(trading_dates), 21)]  # 대략 월 단위 (21 거래일)
+
+            # PBR 데이터 수집
+            pbr_data = []
+            for date in sampled_dates:
+                date_str = date.strftime("%Y%m%d")
                 try:
+                    # 로깅 일시 비활성화
+                    import logging
+                    old_level = logging.getLogger().level
+                    logging.getLogger().setLevel(logging.ERROR)
+
                     fundamental = stock.get_market_fundamental(date_str, date_str, ticker)
+
+                    logging.getLogger().setLevel(old_level)
+
                     if not fundamental.empty and 'PBR' in fundamental.columns:
                         pbr = fundamental.iloc[0]['PBR']
                         if pbr > 0:  # 유효한 PBR만
                             pbr_data.append(pbr)
                 except:
-                    pass
+                    pass  # 에러는 조용히 무시
 
-                current_date += timedelta(days=30)  # 월 단위 샘플링
-
-            if not pbr_data:
+            if not pbr_data or len(pbr_data) < 3:
+                # 데이터가 충분하지 않으면 현재 데이터만 반환
                 return {}
 
             pbr_array = np.array(pbr_data)
@@ -280,7 +299,7 @@ class KoreaStockData:
             }
 
         except Exception as e:
-            self.logger.error(f"PBR 밴드 계산 실패 ({ticker}): {e}")
+            self.logger.debug(f"PBR 밴드 계산 실패 ({ticker}): {e}")
             return {}
 
     def _get_percentile(self, value: float, array: np.ndarray) -> float:

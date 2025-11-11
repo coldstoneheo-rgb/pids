@@ -22,6 +22,10 @@ logging.basicConfig(
     ]
 )
 
+# pykrx의 과도한 로깅 억제
+logging.getLogger('pykrx').setLevel(logging.ERROR)
+logging.getLogger('urllib3').setLevel(logging.ERROR)
+
 logger = logging.getLogger(__name__)
 
 
@@ -114,8 +118,13 @@ def analyze_single_stock():
             print("주가 데이터를 가져올 수 없습니다.")
             return
 
-        # PBR 밴드
+        # PBR 밴드 (시간이 걸릴 수 있음)
+        print("PBR 밴드 분석 중 (시간이 소요될 수 있습니다)...")
         pbr_band = data_fetcher.calculate_pbr_band(ticker)
+        if pbr_band:
+            print(f"PBR 밴드 계산 완료 (현재 PBR: {pbr_band.get('current_pbr', 'N/A')})")
+        else:
+            print("PBR 밴드 데이터를 가져올 수 없습니다 (분석은 계속 진행됩니다)")
 
         # 거래량 분석
         volume_analysis = data_fetcher.get_volume_analysis(ticker)
@@ -163,8 +172,13 @@ def analyze_single_stock():
             print("주가 데이터를 가져올 수 없습니다.")
             return
 
-        # PBR 밴드
+        # PBR 밴드 (시간이 걸릴 수 있음)
+        print("PBR 밴드 분석 중 (시간이 소요될 수 있습니다)...")
         pbr_band = data_fetcher.calculate_pbr_band(ticker)
+        if pbr_band:
+            print(f"PBR 밴드 계산 완료 (현재 PBR: {pbr_band.get('current_pbr', 'N/A')})")
+        else:
+            print("PBR 밴드 데이터를 가져올 수 없습니다 (분석은 계속 진행됩니다)")
 
         # 거래량 분석
         volume_analysis = data_fetcher.get_volume_analysis(ticker)
